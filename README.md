@@ -1,4 +1,4 @@
 Worktime Control;
 ===========
 
-Simple app on node.js application for worktime control of workers.
+Simple app on node.js for worktime control of workers.
