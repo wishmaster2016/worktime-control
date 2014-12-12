@@ -1,4 +1,4 @@
-Simple chat
+Worktime Control;
 ===========
 
-Simple chat node.js application.
+Simple app on node.js application for worktime control of workers.
