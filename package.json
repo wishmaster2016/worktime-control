@@ -1,0 +1,26 @@
+{
+  "name" : "worktime-control",
+  "version" : "0.0.1",
+  "author" : "Serhey Bliznyuk <https://github.com/wishmaster2016>",
+  "description" : "Application for worktime control.",
+  "contributors" : [
+    {
+      "name" : "Sergey Bliznyuk",
+      "url" : "https://github.com/wishmaster2016"
+    }
+  ],
+  "scripts" : {
+    "start" : "node ./index.js"
+  },
+  "main": "./index.js",
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/wishmaster2016/worktime-control.git"
+  },
+  "dependencies" : {
+    "async": "",
+    "express": "",
+    "pg": ""
+  },
+  "license" : "MIT"
+}

@@ -1,0 +1,7 @@
+{
+  "database" : "worktime-control",
+  "unix" : {
+    "username" : "postgres",
+    "password" : "1"
+  }
+}
