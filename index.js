@@ -54,3 +54,29 @@ app.use(bodyParser())
       });
     });
   })
+  .get('/tables', function(req, res) {
+    query("SELECT table_name FROM information_schema.tables WHERE table_schema='public';", function(data) {
+      if(data.length <= 0) {
+        res.json({success : false});
+        return;
+      }
+      else {
+        console.log(data);
+        console.log("tables count= " + data.length);
+        res.json({data : data});
+      }
+    });
+  })
+  .get('/rows/:tableName',  function(req, res) {
+    console.log(req.params.tableName);
+    query("SELECT * FROM "+req.params.tableName+";", function(data) {
+      if(data.length <= 0) {
+        res.json({success : false});
+        return;
+      }
+      else {
+        console.log(data);
+        res.json({data : data});
+      }
+    });
+  })

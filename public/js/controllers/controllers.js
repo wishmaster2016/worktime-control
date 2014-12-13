@@ -57,7 +57,8 @@ angular.module('WorktimeControlApp.controllers', [])
           function() {
             toaster.pop('error', 'Error', 'Please try again later.');
             $scope.$parent.loading = false;
-          });
+          }
+        );
       }
   }])
 
@@ -80,20 +81,69 @@ angular.module('WorktimeControlApp.controllers', [])
     }
   }])
 
-  .controller('worktimeCtrl', ['$scope', '$http', 'toaster', function($scope, $http, toaster) { 
-      var init = function () {
-        setUsername();
-        isLogined = true;
-        toaster.pop('success', 'Hello, ' + username + ' ! ',  'Welcome to the Simple chat.');   
-      };
+  .controller('worktimeCtrl', ['$scope', '$http', '$timeout', 'toaster', function($scope, $http, $timeout, toaster) { 
+    var init = function () {
+      setUsername();
+      isLogined = true;
+      toaster.pop('success', 'Hello, ' + username + ' ! ',  'Welcome to the Simple chat.');   
+    };
 
-      var username = {};
-      
-      $scope.user = JSON.parse(sessionStorage['user'] || '{}');
-      if($scope.user && $scope.user.id && $scope.user.id > 0)
-      {
-          username = $scope.user.login;
-      }
+    var username = {};
+    $scope.table = {};
+    
+    $scope.user = JSON.parse(sessionStorage['user'] || '{}');
+    if($scope.user && $scope.user.id && $scope.user.id > 0) {
+      username = $scope.user.login;
+    }
+
+    $scope.getTables = function() {
+      $.get("/tables", function(data) {
+        $timeout(function() {
+          $scope.tables = data.data;
+        });
+      });    
+    }
+
+    var clearTable = function() {
+      $scope.table = {
+        cols: [ ],
+        rows: [ ],
+        newRow: { },
+        updRow: { }
+      };
+    };
+
+    $scope.selectTable = function(obj) {
+    try {
+      $scope.deleteId = undefined;
+      $scope.updateId = undefined;
+      $scope.loading = true;
+      $scope.tableName = obj;
+      clearTable();
+      if(obj) {
+        $.get("/rows/"+$scope.tableName, function(data) {
+         $timeout(function() {
+            console.log($scope.tables);
+/*          $scope.tables = data.data;*/
+            $scope.table.cols = Object.keys(data.data[0]);
+            for(var i=0; i<data.data.length; i++) {
+              $scope.table.rows.push(data.data[i]);
+            }
+          });/*, function(ret) {
+            $scope.loading = false;
+            $timeout(angular.noop);
+          }, function(err) {
+            throw err;
+          }
+
+        );*/
+      });
+    }}
+    catch(e) {
+      $scope.loading = false;
+      showError(e.message);
+    };
+  };
 
       $scope.changePWD = function() {
         $scope.$parent.loading = true;

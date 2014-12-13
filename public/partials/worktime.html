@@ -3,4 +3,31 @@
   <button ng-click="logout()" class="btn btn btn-danger">
     Log out
   </button>
+  <button ng-click="getTables()" class="btn btn btn-warning">
+    Get table
+  </button>
+
+  <div class="panel-collapse">
+    <div class="panel-body">
+      <ul class="nav nav-sidebar">
+        <li ng-repeat="t in tables"
+            ng-click="selectTable(t.table_name)">
+          <span ng-bind="t.table_name"></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div ng-show="table.rows.length" class="panel-group">
+    <table class="table table-bordered">
+      <tbody>
+        <tr ng-repeat="row in table.rows">
+          <td ng-repeat="col in table.cols">
+            <span ng-bind="row[col]"></span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
 </div>
