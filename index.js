@@ -80,3 +80,23 @@ app.use(bodyParser())
       }
     });
   })
+  .post('/updateRow', function(req, res) {
+    query("UPDATE " + req.body.name + " SET " + req.body.updStr + "WHERE id ='" + req.body.id + "'", function(data) {
+      if(data.length == 0) {
+        res.json({success : true, data : data[0]});
+        return;
+      }
+      else
+        res.json({success : false});
+    });
+  })
+  .post('/deleteRow', function(req, res) {
+    query("DELETE FROM " + req.body.name + " WHERE id ='" + req.body.id + "'", function(data) {
+      if(data.length == 0) {
+        res.json({success : true, data : data[0]});
+        return;
+      }
+      else
+        res.json({success : false});
+    });
+  })

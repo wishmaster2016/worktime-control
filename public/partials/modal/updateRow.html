@@ -1,0 +1,32 @@
+<div class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" ng-click="$hide(); clearUpdateForm()">&times;</button>
+        <h4 class="modal-title">Updating</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal my-form" role="form">
+          <div ng-repeat="col in table.cols" class="form-group">
+            <label class="col-sm-3 control-label">
+              {{ col }}
+              <sup>
+                <span class="glyphicon glyphicon-asterisk text-danger"
+                      aria-hidden="true" ng-hide="col.nullable"></span>
+              </sup>
+            </label>
+            <div class="col-sm-9">
+              <input ng-required="!col.nullable"
+                     class="form-control" placeholder="{{ col }}" 
+                     ng-model="table.updRow[col].val"/>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="$hide(); clearUpdateForm()">No, close</button>
+        <button type="button" class="btn btn-warning" ng-click="updateRow(); $hide()">Yes, update</button>
+      </div>
+    </div>
+  </div>
+</div>

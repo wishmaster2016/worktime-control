@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('WorktimeControlApp.controllers', [])
+angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
   .controller('loginCtrl', ['$scope', '$http', 'toaster' , '$timeout', function($scope, $http, toaster, $timeout) {
       var $window = $(window);
       var $usernameInput = $('.usernameInput');
@@ -81,28 +81,32 @@ angular.module('WorktimeControlApp.controllers', [])
     }
   }])
 
-  .controller('worktimeCtrl', ['$scope', '$http', '$timeout', 'toaster', function($scope, $http, $timeout, toaster) { 
+  .controller('worktimeCtrl', ['$scope', '$http', '$timeout', '$modal', 'toaster', function($scope, $http, $timeout, $modal, toaster) { 
     var init = function () {
       setUsername();
       isLogined = true;
       toaster.pop('success', 'Hello, ' + username + ' ! ',  'Welcome to the Simple chat.');   
     };
-
     var username = {};
     $scope.table = {};
+    $scope.tableName = undefined;
+    $scope.tableCount = undefined;
     
     $scope.user = JSON.parse(sessionStorage['user'] || '{}');
     if($scope.user && $scope.user.id && $scope.user.id > 0) {
       username = $scope.user.login;
     }
 
-    $scope.getTables = function() {
+    var getTables = function() {
       $.get("/tables", function(data) {
         $timeout(function() {
           $scope.tables = data.data;
+          $scope.tableCount = data.data.length;
         });
       });    
     }
+
+    getTables();
 
     var clearTable = function() {
       $scope.table = {
@@ -114,68 +118,163 @@ angular.module('WorktimeControlApp.controllers', [])
     };
 
     $scope.selectTable = function(obj) {
-    try {
-      $scope.deleteId = undefined;
-      $scope.updateId = undefined;
-      $scope.loading = true;
-      $scope.tableName = obj;
-      clearTable();
-      if(obj) {
-        $.get("/rows/"+$scope.tableName, function(data) {
-         $timeout(function() {
-            console.log($scope.tables);
-/*          $scope.tables = data.data;*/
-            $scope.table.cols = Object.keys(data.data[0]);
-            for(var i=0; i<data.data.length; i++) {
-              $scope.table.rows.push(data.data[i]);
-            }
-          });/*, function(ret) {
-            $scope.loading = false;
-            $timeout(angular.noop);
-          }, function(err) {
-            throw err;
-          }
-
-        );*/
-      });
-    }}
-    catch(e) {
-      $scope.loading = false;
-      showError(e.message);
-    };
-  };
-
-      $scope.changePWD = function() {
-        $scope.$parent.loading = true;
-        var params = {
-          id : $scope.user.id, 
-          password : document.getElementById("oldPassword").value,
-          email : $scope.user.email,
-          newPassword : document.getElementById("newPassword").value,
-        };
-        if(document.getElementById("newPassword").value != document.getElementById("newPasswordConfirm").value) {
-          toaster.pop('warning', 'Error', 'Password repeat is typed incorrectly.');
-          $scope.$parent.loading = false;
-          return;
-        }
-        if(document.getElementById("newPassword").value.length < 6) {
-          toaster.pop('warning', 'Error', 'Password must be at least 6 characters.');
-          $scope.$parent.loading = false;
-          return;
-        }
-        $http.post("/saveprofilepw", params)
-          .then(function(data) {
-            if(data.data.success) {
-              sessionStorage['user'] = JSON.stringify(data.data.data);
-              toaster.pop('info', 'Information', 'User password successfully changed.');
-            }
-            else
-              toaster.pop('error', 'Error', 'Entered password is incorrect. Please try again later.');
-            $scope.$parent.loading = false;
-          },
-          function() {
-            toaster.pop('error', 'Error', 'Please try again later.');
-            $scope.$parent.loading = false;
+      try {
+        $scope.deleteId = undefined;
+        $scope.updateId = undefined;
+        $scope.loading = true;
+        $scope.tableName = obj;
+        clearTable();
+        if(obj) {
+          $.get("/rows/"+$scope.tableName, function(data) {
+            $timeout(function() {
+              console.log($scope.tables);
+              $scope.table.cols = Object.keys(data.data[0]);
+              for(var i=0; i<data.data.length; i++) {
+                $scope.table.rows.push(data.data[i]);
+              }
+              for(var i in $scope.table.cols) {
+                var tmp = $scope.table.cols[i];
+                $scope.table.updRow[tmp] = {};
+              }
+            });
           });
+        }
       }
+      catch(e) {
+        $scope.loading = false;
+        showError(e.message);
+      };
+    };
+
+    $scope.showModalUpdateRow = function(id, row) {
+      $scope.updateId = id;
+      var b = angular.copy(row);
+      for(var key in b) {
+        $scope.table.updRow[key].val = b[key];
+      }
+      $modal({
+        scope: $scope,
+        template: 'partials/modal/updateRow.html',
+        show: true
+      });
+    };
+
+    $scope.updateRow = function(id) {
+      var upd = id;
+      if(!upd) {
+        upd = $scope.updateId;
+      }
+      $scope.loading = true;
+      var newRow = $scope.table.updRow;
+      var columns = Object.keys(newRow);
+      var updString = "";
+      for (var i = 0; i < columns.length; i++) {
+        if(i == columns.length - 1) {
+          updString += columns[i] + "='" + newRow[columns[i]].val + "' ";
+        }
+        else {
+          updString += columns[i] + "='" + newRow[columns[i]].val + "', ";
+        }
+      }
+      var params = {
+        id : upd,
+        name : $scope.tableName,
+        updStr : updString
+      };
+      $http.post("/updateRow", params)
+        .then(function(data) {
+          if(data.data.success) {
+            toaster.pop('info', 'Information', 'Row successfully updated.');
+            refreshTable();
+          }
+          else {
+            toaster.pop('error', 'Error', 'Can`t update row.');
+            refreshTable();
+          }
+        },
+        function() {
+          toaster.pop('error', 'Error', 'Please try again later.');
+          refreshTable();
+      });
+    };
+
+    $scope.clearUpdateForm = function() {
+      angular.forEach($scope.table.updRow, function(value, key) {
+        $scope.table.updRow[key].val = '';
+      });
+    };
+
+    $scope.showModalDeleteRow = function(id) {
+      $scope.deleteId = id;
+      $modal({
+        scope: $scope,
+        template: 'partials/modal/deleteRow.html',
+        show: true
+      });
+    };
+
+    $scope.deleteRow = function(id) {
+      var del = id;
+      if(!del) {
+        del = $scope.deleteId;
+      }
+      $scope.loading = true;
+      var params = {
+        id : del,
+        name : $scope.tableName,
+      };
+      $http.post("/deleteRow", params)
+        .then(function(data) {
+          if(data.data.success) {
+            toaster.pop('info', 'Information', 'Row successfully deleted.');
+            refreshTable();
+          }
+          else {
+            toaster.pop('error', 'Error', 'Can`t delete row.');
+            refreshTable();
+          }
+        },
+        function() {
+          toaster.pop('error', 'Error', 'Please try again later.');
+          refreshTable();
+      });
+    };
+
+    var refreshTable = function() {
+      $scope.selectTable($scope.tableName);
+    };
+
+    $scope.changePWD = function() {
+      $scope.$parent.loading = true;
+      var params = {
+        id : $scope.user.id, 
+        password : document.getElementById("oldPassword").value,
+        email : $scope.user.email,
+        newPassword : document.getElementById("newPassword").value,
+      };
+      if(document.getElementById("newPassword").value != document.getElementById("newPasswordConfirm").value) {
+        toaster.pop('warning', 'Error', 'Password repeat is typed incorrectly.');
+        $scope.$parent.loading = false;
+        return;
+      }
+      if(document.getElementById("newPassword").value.length < 6) {
+        toaster.pop('warning', 'Error', 'Password must be at least 6 characters.');
+        $scope.$parent.loading = false;
+        return;
+      }
+      $http.post("/saveprofilepw", params)
+        .then(function(data) {
+          if(data.data.success) {
+            sessionStorage['user'] = JSON.stringify(data.data.data);
+            toaster.pop('info', 'Information', 'User password successfully changed.');
+          }
+          else
+            toaster.pop('error', 'Error', 'Entered password is incorrect. Please try again later.');
+          $scope.$parent.loading = false;
+        },
+        function() {
+          toaster.pop('error', 'Error', 'Please try again later.');
+          $scope.$parent.loading = false;
+        });
+    }
   }]);
