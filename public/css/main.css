@@ -80,11 +80,6 @@ body
 	background-color: #564F8A; 
 }
 
-.panel.panel-success.tables
-{
-  margin-left: 30px;
-}
-
 .panel.panel-default.inpmsg-panel
 {
 	width: 96%;
@@ -130,7 +125,7 @@ body
 }
 
 .main {
-  margin: 0 auto;
+  padding: 40px;
 }
 
 th.cell-warning,

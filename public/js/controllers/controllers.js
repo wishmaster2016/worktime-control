@@ -128,13 +128,23 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
           $.get("/rows/"+$scope.tableName, function(data) {
             $timeout(function() {
               console.log($scope.tables);
-              $scope.table.cols = Object.keys(data.data[0]);
-              for(var i=0; i<data.data.length; i++) {
-                $scope.table.rows.push(data.data[i]);
+              if(data.data[0].column_name) {
+                var buf = []
+                for(var i = 0; i<data.data.length; i++) {
+                  buf.push(data.data[i].column_name);
+                }
+                $scope.table.cols = buf;
+              }
+              else {
+                $scope.table.cols = Object.keys(data.data[0]);
+                for(var i = 0; i < data.data.length; i++) {
+                  $scope.table.rows.push(data.data[i]);
+                }
               }
               for(var i in $scope.table.cols) {
                 var tmp = $scope.table.cols[i];
                 $scope.table.updRow[tmp] = {};
+                $scope.table.newRow[tmp] = {};
               }
             });
           });
@@ -144,6 +154,60 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
         $scope.loading = false;
         showError(e.message);
       };
+    };
+
+    $scope.showModalAddRow = function() {
+      for(var i = 0; i < $scope.table.cols.length; i++) {
+        $scope.table.newRow[$scope.table.cols[i]].val = "";
+      }
+      $modal({
+        scope: $scope,
+        template: 'partials/modal/addRow.html',
+        show: true
+      });
+    };
+
+    $scope.addRow = function() {
+      $scope.loading = true;
+      var newRow = $scope.table.newRow;
+      var columns = Object.keys(newRow);
+      var addString = "";
+      for (var i = 0; i < columns.length; i++) {
+        if(i == 0) {
+          addString += "('" + newRow[columns[i]].val + "', ";
+        }
+        else if(i == columns.length - 1) {
+          addString += "'" + newRow[columns[i]].val + "')";
+        }
+        else {
+          addString +="'" + newRow[columns[i]].val + "', ";
+        }
+      }
+      var params = {
+        name : $scope.tableName,
+        addStr : addString
+      };
+      $http.post("/addRow", params)
+        .then(function(data) {
+          if(data.data.success) {
+            toaster.pop('info', 'Information', 'Row successfully added.');
+            refreshTable();
+          }
+          else {
+            toaster.pop('error', 'Error', 'Can`t add row.');
+            refreshTable();
+          }
+        },
+        function() {
+          toaster.pop('error', 'Error', 'Please try again later.');
+          refreshTable();
+      });
+    };
+
+    $scope.clearAddForm = function() {
+      angular.forEach($scope.table.updRow, function(value, key) {
+        $scope.table.updRow[key].val = '';
+      });
     };
 
     $scope.showModalUpdateRow = function(id, row) {
