@@ -1,11 +1,3 @@
-<!-- <div class="test">
-  worktime-controller
-  <button ng-click="logout()" class="btn btn btn-danger">
-    Log out
-  </button>
-</div> -->
-
-
 <div class="row">
   <div class="col-sm-3 col-md-2 sidebar">
     <div class="panel panel-success tables">
@@ -29,90 +21,93 @@
     </div>
   </div>
   <div ng-show="pagingData.tableName" class="col-sm-9 col-md-10">
-      <h1 class="tableTitle">Table<small ID="TableName">&nbsp{{ pagingData.tableName }}</small></h1>
-      <hr />
-      <h2>Show data:</h2>
-      <div class="panel-group">
-        <form class="form-horizontal" role="form">
-          <div class="form-group">
-            <label class="col-sm-offset-9 col-sm-2 control-label">Items per page:</label>
-            <div class="col-sm-1">
-              <input type="number" 
-                     min="1" 
-                     max="100" 
-                     class="form-control"
-                     ng-model="pagingData.pageSize"
-                     ng-change="selectTable(pagingData.tableName, 1)" />
-            </div>
+    <h1 class="tableTitle">
+      Table
+      <small ID="TableName">&nbsp{{ pagingData.tableName }}</small>
+    </h1>
+    <hr />
+    <h2>Show data:</h2>
+    <div class="panel-group">
+      <form class="form-horizontal" role="form">
+        <div class="form-group">
+          <label class="col-sm-offset-9 col-sm-2 control-label">Items per page:</label>
+          <div class="col-sm-1">
+            <input type="number" 
+                   min="1" 
+                   max="100" 
+                   class="form-control"
+                   ng-model="pagingData.pageSize"
+                   ng-change="selectTable(pagingData.tableName, 1)" />
           </div>
-        </form>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th class="search-input" ng-repeat="col in table.cols">
-                <input type="text" 
-                       placeholder="search by {{col}}" 
-                       ng-model="searchCols[col]" />
-              </th>
-              <th class="search-input" colspan="2">
-                <button class="btn btn-default btn-block" ng-click="selectTable(pagingData.tableName, 1)">
-                  Search
-                  <span class="glyphicon glyphicon-search"></span>
-                </button>
-              </th>
-            </tr>
-            <tr>
-              <th ng-repeat="col in table.cols">
-                <span class="col-header" 
-                      data-placement="top" 
-                      ng-click="sort(col)">
-                  {{ col }}
-                  <span ng-show="col == filterCriteria.orderBy">
-                    <span ng-show="filterCriteria.orderAsc"
-                          class="glyphicon glyphicon-chevron-down">
-                    </span>
-                    <span ng-show="!filterCriteria.orderAsc"
-                          class="glyphicon glyphicon-chevron-up">
-                    </span>
+        </div>
+      </form>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th class="search-input" ng-repeat="col in table.cols">
+              <input type="text" 
+                     placeholder="search by {{col}}" 
+                     ng-model="searchCols[col]" />
+            </th>
+            <th class="search-input" colspan="2">
+              <button class="btn btn-default btn-block" ng-click="selectTable(pagingData.tableName, 1)">
+                Search
+                <span class="glyphicon glyphicon-search"></span>
+              </button>
+            </th>
+          </tr>
+          <tr>
+            <th ng-repeat="col in table.cols">
+              <span class="col-header" 
+                    data-placement="top" 
+                    ng-click="sort(col)">
+                {{ col }}
+                <span ng-show="col == filterCriteria.orderBy">
+                  <span ng-show="filterCriteria.orderAsc"
+                        class="glyphicon glyphicon-chevron-down">
+                  </span>
+                  <span ng-show="!filterCriteria.orderAsc"
+                        class="glyphicon glyphicon-chevron-up">
                   </span>
                 </span>
-              </th>
-              <th class="cell-warning">
-                <span class="glyphicon glyphicon-edit text-warning"
-                      aria-hidden="true" data-placement="top"
-                      data-title="Edit">
+              </span>
+            </th>
+            <th class="cell-warning">
+              <span class="glyphicon glyphicon-edit text-warning"
+                    aria-hidden="true" data-placement="top"
+                    data-title="Edit">
+              </span>
+            </th>
+            <th class="cell-danger">
+              <span class="glyphicon glyphicon-remove text-danger"
+                    aria-hidden="true" data-placement="top"
+                    data-title="Delete">
+              </span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="row in table.rows">
+            <td ng-repeat="col in table.cols">
+              <span ng-bind="row[col]"></span>
+            </td>
+            <td class="cell-warning" ng-click="showModalUpdateRow(row.id, row)">
+                <span class="glyphicon glyphicon-pencil" aria-hidden="true"
+                      data-placement="top" data-title="Edit" bs-tooltip>
                 </span>
-              </th>
-              <th class="cell-danger">
-                <span class="glyphicon glyphicon-remove text-danger"
-                      aria-hidden="true" data-placement="top"
-                      data-title="Delete">
+            </td>
+            <td class="cell-danger" ng-click="showModalDeleteRow(row.id)">
+                <span class="glyphicon glyphicon-trash" aria-hidden="true"
+                      data-placement="top" data-title="Delete" bs-tooltip>
                 </span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr ng-repeat="row in table.rows">
-              <td ng-repeat="col in table.cols">
-                <span ng-bind="row[col]"></span>
-              </td>
-              <td class="cell-warning" ng-click="showModalUpdateRow(row.id, row)">
-                  <span class="glyphicon glyphicon-pencil" aria-hidden="true"
-                        data-placement="top" data-title="Edit" bs-tooltip>
-                  </span>
-              </td>
-              <td class="cell-danger" ng-click="showModalDeleteRow(row.id)">
-                  <span class="glyphicon glyphicon-trash" aria-hidden="true"
-                        data-placement="top" data-title="Delete" bs-tooltip>
-                  </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <pagination ng-if="pagingData.totalPages > 1" 
-                    paging-data="pagingData" 
-                    on-select-page="selectTable">
-        </pagination>
-      </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <pagination ng-if="pagingData.totalPages > 1" 
+                  paging-data="pagingData" 
+                  on-select-page="selectTable">
+      </pagination>
+    </div>
   </div>
 </div>

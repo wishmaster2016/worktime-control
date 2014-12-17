@@ -1,109 +1,58 @@
 'use strict';
 
 angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
-  .controller('loginCtrl', ['$scope', '$http', 'toaster' , '$timeout', function($scope, $http, toaster, $timeout) {
-      var $window = $(window);
-      var $usernameInput = $('.usernameInput');
-      var username;
-      var $currentInput = $usernameInput.focus();
-      var countOfUsers = parseInt($scope.badge);
-
-      $scope.logout = function() {
-        toaster.pop('info', 'Information', 'You are successfully logged off.');
-        setTimeout(function () {
-          $scope.loading = true;
-          delete sessionStorage['user'];
-          $scope.user = null;
-          location.reload();
-          $scope.loading = false;
-        }, 2500);     
+  .controller('loginCtrl', ['$scope', '$http', 'toaster' , '$timeout', 'Authentication', function($scope, $http, toaster, $timeout, Authentication) {
+    var $window = $(window);
+    $scope.authenticated = Authentication.isAuthenticated();
+    $window.keydown(function (event) {
+      if (event.which === 13) {
+        signIn();
       }
+    });
 
-      function setUsername () {
-        username = cleanInput($usernameInput.val());
-        //sharedProperties.setProperty(username);
-      }
-
-      function cleanInput (input) {
-        return $('<div/>').text(input).text();
-      }
-
-      $window.keydown(function (event) {
-        if (event.which === 13) {
-          signIn();
-        }
-      });
-
-      $scope.user = sessionStorage['user'];
-      $scope.output = "chat";
-      $scope.signIn = function() {
-        $scope.$parent.loading = true;
-        var params = {
-          login : $scope.login, 
-          password : $scope.password,
-        };
-        $http.post("/login", params)
-          .then(function(data) {
-            if(data.data.success) {
-              sessionStorage['user'] = JSON.stringify(data.data.data);
-              username = cleanInput($usernameInput.val());
-              //sharedProperties.setProperty(username);              
-              location.reload();
-            }
-            else
-              toaster.pop('error', 'Error', 'Entered username and / or password is incorrect. Please try again later.');
-            $scope.$parent.loading = false;
-          },
-          function() {
-            toaster.pop('error', 'Error', 'Please try again later.');
-            $scope.$parent.loading = false;
-          }
-        );
-      }
+    $scope.signIn = function() {
+      Authentication.signIn($scope.login, $scope.password);
+    };
   }])
 
-  .controller('mainCtrl', ['$scope', '$http', '$location', 'toaster' , function($scope, $http, $location , toaster) {
-    var countOfUsers = 0;
+  .controller('mainCtrl', ['$scope', '$http', '$location', 'toaster', 'Authentication', '$timeout', function($scope, $http, $location, toaster, Authentication, $timeout) {
     $scope.loginFlag = false;
     $scope.page = null;
+    $scope.authenticated = Authentication.isAuthenticated();
+    $scope.userName = Authentication.getUsername();
     $scope.$on('$routeChangeSuccess', function() {
-    $scope.page = $location.path();
+      $scope.page = $location.path();
     });
-    $scope.logout = function() {
-      toaster.pop('info', 'Information', 'You are successfully logged off.');
-      setTimeout(function () {
-        $scope.loading = true;
-        delete sessionStorage['user'];
-        $scope.user = null;
-        location.reload();
-        $scope.loading = false;
-      }, 2500);     
-    }
+
+    $scope.signOut = function() {
+      $scope.authenticated = Authentication.signOut();
+      toaster.pop('info', 'Information', 'Row successfully updated.');
+    };
+
+    if($scope.authenticated) {
+      $timeout( function() {
+        toaster.pop('success', 'Hello, ' + Authentication.getUsername() + ' ! ',  'Welcome to the Worktime Control app.');
+      });
+    };
   }])
 
   .controller('worktimeCtrl', ['$scope', '$http', '$timeout', '$modal', 'toaster', function($scope, $http, $timeout, $modal, toaster) { 
     var init = function () {
-      setUsername();
-      isLogined = true;
       toaster.pop('success', 'Hello, ' + username + ' ! ',  'Welcome to the Simple chat.');   
     };
 
     var username = {};
     $scope.table = {};
     $scope.curRowCount = 0;
-
     $scope.searchCols = {};
-    
     $scope.tableCount = undefined;
     $scope.tablesDetails = {};
-
     $scope.pagingData = {
       tableName: undefined,
       totalPages: 0,
       selectedPage: 1,
       pageSize: 3
     };
-
     $scope.filterCriteria = {
       orderBy: 'id',
       orderAsc: true

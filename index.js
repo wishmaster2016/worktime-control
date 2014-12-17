@@ -3,7 +3,6 @@ var query = require('./js/query.js');
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-var serveFavicon = require('serve-favicon');
 var server = require('http').createServer(app);
 var port = process.env.PORT || 8888;
 

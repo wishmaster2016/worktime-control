@@ -52,9 +52,9 @@ body
 .logo {
     width: 45px;
     height: 45px;
-    padding-top: 5px;
     float: left;
     padding-right: 5px;
+    padding-top: 5px;
 }
 
 .jumbotron.login
@@ -84,11 +84,11 @@ body
 .sidebar .panel .panel-body {
   background-color: #eee;
 }
-
+/*
 .navbar-header {
 	color: #564F8A; 
 	width: 60%;
-}
+}*/
 
 .test {
   margin-top: 100px;
@@ -97,12 +97,11 @@ body
   width: 200px;
 }
 
-.navbar-default .navbar-brand {
+/*.navbar-default .navbar-brand {
   color: #564F8A !important;
   font-family: "wf_SegoeUIBold";
   font-size: x-large;
-
-}
+}*/
 
 .main {
   padding: 40px;
