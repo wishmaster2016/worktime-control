@@ -24,6 +24,10 @@ body
   color: #FFFFFF;
 }
 
+.content {
+  padding-top: 75px;
+}
+
 .form-control.page-items {
   width: 75px;
 }
@@ -42,6 +46,7 @@ body
 
 .list-tables .active .btn-add {
   display: inline-block;
+  cursor: pointer;
 }
 
 .logo {

@@ -10,9 +10,6 @@ angular.module('WorktimeControlApp.directives', [])
       },
       templateUrl: 'partials/directives/pagination.html',
       link: function($scope, elm, attrs) {
-/*        console.log(scope.numPages);
-        console.log(scope.tableName);
-        console.log(scope.currentPage);*/
         $scope.pages = [];
         $scope.$watch(function () {
           return $scope.pagingData;

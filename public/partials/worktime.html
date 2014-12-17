@@ -1,9 +1,9 @@
-<div class="test">
+<!-- <div class="test">
   worktime-controller
   <button ng-click="logout()" class="btn btn btn-danger">
     Log out
   </button>
-</div>
+</div> -->
 
 
 <div class="row">
@@ -28,11 +28,11 @@
       </div>
     </div>
   </div>
-  <div class="col-sm-9 col-md-10">
+  <div ng-show="pagingData.tableName" class="col-sm-9 col-md-10">
       <h1 class="tableTitle">Table<small ID="TableName">&nbsp{{ pagingData.tableName }}</small></h1>
       <hr />
-      <h2 ng-show="table.rows.length">Show data:</h2>
-      <div ng-show="table.rows.length" class="panel-group">
+      <h2>Show data:</h2>
+      <div class="panel-group">
         <form class="form-horizontal" role="form">
           <div class="form-group">
             <label class="col-sm-offset-9 col-sm-2 control-label">Items per page:</label>
@@ -50,10 +50,16 @@
           <thead>
             <tr>
               <th class="search-input" ng-repeat="col in table.cols">
-                <input type="text" placeholder="search by {{col}}"></input>
+                <input type="text" 
+                       placeholder="search by {{col}}" 
+                       ng-model="searchCols[col]" />
               </th>
-              <th class="search-input"></th>
-              <th class="search-input"></th>
+              <th class="search-input" colspan="2">
+                <button class="btn btn-default btn-block" ng-click="selectTable(pagingData.tableName, 1)">
+                  Search
+                  <span class="glyphicon glyphicon-search"></span>
+                </button>
+              </th>
             </tr>
             <tr>
               <th ng-repeat="col in table.cols">

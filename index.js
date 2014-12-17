@@ -52,25 +52,30 @@ app.use(bodyParser())
       }
     });
   })
-  .post('/rows',  function(req, res) {
-    console.log(req.body.tableName);
-    console.log(req.body.pageSize);
-    console.log(req.body.offset);
-    console.log("SELECT * FROM " + req.body.tableName + " LIMIT " + req.body.pageSize + " OFFSET " + req.body.offset + " ORDER BY " + 
-    req.body.orderBy + " " + req.body.orderAsc +";");
-    query("SELECT * FROM " + req.body.tableName + " ORDER BY " + req.body.orderBy + " " 
+  .post('/rows', function(req, res) {
+    var where = "";
+    var searchCols = req.body.searchCols;
+    if(searchCols)
+    {
+      where += " WHERE ";
+      for(var key in searchCols) {
+        if(searchCols[key].length > 0) {
+          where += "cast(" + key + " as text) LIKE '%" + searchCols[key] + "%' AND ";
+        }
+      }
+      where = where.substring(0, where.length - 5);
+      console.log(where);
+    }
+    query("SELECT * FROM " + req.body.tableName + where + " ORDER BY " + req.body.orderBy + " " 
       + req.body.orderAsc + " LIMIT " + req.body.pageSize + " OFFSET " + req.body.offset + ";", function(data) {
       if(data.length < 0) {
-        console.log(22222222);
         res.json({success : false});
         return;
       }
       else if(data.length == 0) {
-        console.log(111111111);
         query("SELECT column_name FROM information_schema.columns WHERE table_name='" + req.body.tableName + "';", function(data) {
           console.log(data);
           res.json({success : true, data : data});
-          //return;
         });
       }
       else {
@@ -79,9 +84,22 @@ app.use(bodyParser())
       }
     });
   })
-  .get('/rowsCount/:tableName',  function(req, res) {
-    console.log(req.params.tableName);
-    query("SELECT COUNT(*) FROM " + req.params.tableName + ";", function(data) {
+  .post('/rowsCount', function(req, res) {
+    var where = "";
+    var searchCols = req.body.searchCols;
+    if(searchCols)
+    {
+      where += " WHERE ";
+      for(var key in searchCols) {
+        if(searchCols[key].length > 0) {
+          where += "cast(" + key + " as text) LIKE '%" + searchCols[key] + "%' AND ";
+        }
+      }
+      where = where.substring(0, where.length - 5);
+      console.log(where);
+    }
+    console.log("SELECT COUNT(*) FROM " + req.body.tableName + where + ";");
+    query("SELECT COUNT(*) FROM " + req.body.tableName + where + ";", function(data) {
       if(data.length <= 0) {
         res.json({success : false});
         return;

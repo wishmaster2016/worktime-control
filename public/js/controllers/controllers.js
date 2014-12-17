@@ -91,6 +91,8 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
     var username = {};
     $scope.table = {};
     $scope.curRowCount = 0;
+
+    $scope.searchCols = {};
     
     $scope.tableCount = undefined;
     $scope.tablesDetails = {};
@@ -147,17 +149,21 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
     $scope.selectTable = function(obj, page) {
       try {
         var offset = page * $scope.pagingData.pageSize - $scope.pagingData.pageSize;
-        $scope.deleteId = undefined;
-        $scope.updateId = undefined;
+        var params = {};
         $scope.loading = true;
         $scope.pagingData.tableName = obj;
         $scope.pagingData.selectedPage = page;
         clearTable();
-        $.get("/rowsCount/"+$scope.pagingData.tableName, function(data) {
-          $timeout(function() {
-            $scope.curRowCount = data.data[0].count;
-            $scope.pagingData.totalPages = Math.ceil($scope.curRowCount/$scope.pagingData.pageSize)
-          });
+        params = {
+          tableName: $scope.pagingData.tableName,
+          searchCols: $scope.searchCols
+        };
+        $http.post("/rowsCount", params)
+          .then(function(data) {
+            $timeout(function() {
+              $scope.curRowCount = data.data.data[0].count;
+              $scope.pagingData.totalPages = Math.ceil($scope.curRowCount / $scope.pagingData.pageSize)
+            });
         });
         if(obj) {
           var order = undefined;
@@ -167,17 +173,17 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
           else {
             order = "desc";
           }
-          var params = {
+          params = {
             tableName: $scope.pagingData.tableName,
             pageSize: $scope.pagingData.pageSize,
             offset: offset,
             orderBy: $scope.filterCriteria.orderBy,
-            orderAsc: order
+            orderAsc: order,
+            searchCols: $scope.searchCols
           };
           $http.post("/rows/", params) 
             .then(function(data) {
               $timeout(function() {
-                /*console.log($scope.tables);*/
                 if(data.data.data[0].column_name) {
                   var buf = []
                   for(var i = 0; i<data.data.data.length; i++) {
