@@ -9,7 +9,8 @@ body
 }
 
 .col-header {
-  color: #5cb85c; 
+  color: #5cb85c;
+  cursor: pointer;
 }
 
 .list-group.list-tables li.active,

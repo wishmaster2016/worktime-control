@@ -87,12 +87,10 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
       isLogined = true;
       toaster.pop('success', 'Hello, ' + username + ' ! ',  'Welcome to the Simple chat.');   
     };
+
     var username = {};
     $scope.table = {};
     $scope.curRowCount = 0;
-/*    $scope.totalPages = 0;
-    $scope.selectedPage = 1;
-    $scope.pageSize = 3;*/
     
     $scope.tableCount = undefined;
     $scope.tablesDetails = {};
@@ -105,8 +103,8 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
     };
 
     $scope.filterCriteria = {
-      pageNumber: 1,
-      sortDir: 'asc'
+      orderBy: 'id',
+      orderAsc: true
     };
     
     $scope.user = JSON.parse(sessionStorage['user'] || '{}');
@@ -114,11 +112,18 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
       username = $scope.user.login;
     }
 
+    $scope.sort = function(column) {
+      $scope.filterCriteria.orderBy = column;
+      $scope.filterCriteria.orderAsc = !$scope.filterCriteria.orderAsc;
+      $scope.selectTable($scope.pagingData.tableName, $scope.pagingData.selectedPage);
+    };
+
     var getTables = function() {
       $.get("/tables", function(data) {
         $timeout(function() {
           $scope.tables = data.data;
           $scope.tableCount = data.data.length;
+          setToDefaultFilter();
         });
       });    
     }
@@ -132,6 +137,11 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
         newRow: { },
         updRow: { }
       };
+    };
+
+    var setToDefaultFilter = function() {
+      $scope.filterCriteria.orderBy = 'id';
+      $scope.filterCriteria.orderAsc = true;
     };
 
     $scope.selectTable = function(obj, page) {
@@ -150,29 +160,44 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
           });
         });
         if(obj) {
-          $.get("/rows/"+$scope.pagingData.tableName+"/"+$scope.pagingData.pageSize+"/"+offset, function(data) {
-            $timeout(function() {
-              /*console.log($scope.tables);*/
-              if(data.data[0].column_name) {
-                var buf = []
-                for(var i = 0; i<data.data.length; i++) {
-                  buf.push(data.data[i].column_name);
+          var order = undefined;
+          if($scope.filterCriteria.orderAsc) {
+            order = "asc";
+          }
+          else {
+            order = "desc";
+          }
+          var params = {
+            tableName: $scope.pagingData.tableName,
+            pageSize: $scope.pagingData.pageSize,
+            offset: offset,
+            orderBy: $scope.filterCriteria.orderBy,
+            orderAsc: order
+          };
+          $http.post("/rows/", params) 
+            .then(function(data) {
+              $timeout(function() {
+                /*console.log($scope.tables);*/
+                if(data.data.data[0].column_name) {
+                  var buf = []
+                  for(var i = 0; i<data.data.data.length; i++) {
+                    buf.push(data.data.data[i].column_name);
+                  }
+                  $scope.table.cols = buf;
                 }
-                $scope.table.cols = buf;
-              }
-              else {
-                $scope.table.cols = Object.keys(data.data[0]);
-                for(var i = 0; i < data.data.length; i++) {
-                  $scope.table.rows.push(data.data[i]);
+                else {
+                  $scope.table.cols = Object.keys(data.data.data[0]);
+                  for(var i = 0; i < data.data.data.length; i++) {
+                    $scope.table.rows.push(data.data.data[i]);
+                  }
                 }
-              }
-              for(var i in $scope.table.cols) {
-                var tmp = $scope.table.cols[i];
-                $scope.table.updRow[tmp] = {};
-                $scope.table.newRow[tmp] = {};
-              }
+                for(var i in $scope.table.cols) {
+                  var tmp = $scope.table.cols[i];
+                  $scope.table.updRow[tmp] = {};
+                  $scope.table.newRow[tmp] = {};
+                }
+              });
             });
-          });
         }
       }
       catch(e) {
@@ -332,38 +357,4 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
     var refreshTable = function() {
       $scope.selectTable($scope.pagingData.tableName, 1);
     };
-
-    $scope.changePWD = function() {
-      $scope.$parent.loading = true;
-      var params = {
-        id : $scope.user.id, 
-        password : document.getElementById("oldPassword").value,
-        email : $scope.user.email,
-        newPassword : document.getElementById("newPassword").value,
-      };
-      if(document.getElementById("newPassword").value != document.getElementById("newPasswordConfirm").value) {
-        toaster.pop('warning', 'Error', 'Password repeat is typed incorrectly.');
-        $scope.$parent.loading = false;
-        return;
-      }
-      if(document.getElementById("newPassword").value.length < 6) {
-        toaster.pop('warning', 'Error', 'Password must be at least 6 characters.');
-        $scope.$parent.loading = false;
-        return;
-      }
-      $http.post("/saveprofilepw", params)
-        .then(function(data) {
-          if(data.data.success) {
-            sessionStorage['user'] = JSON.stringify(data.data.data);
-            toaster.pop('info', 'Information', 'User password successfully changed.');
-          }
-          else
-            toaster.pop('error', 'Error', 'Entered password is incorrect. Please try again later.');
-          $scope.$parent.loading = false;
-        },
-        function() {
-          toaster.pop('error', 'Error', 'Please try again later.');
-          $scope.$parent.loading = false;
-        });
-    }
   }]);

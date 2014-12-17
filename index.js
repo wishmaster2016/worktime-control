@@ -39,21 +39,6 @@ app.use(bodyParser())
         res.json({success : true, data : data[0]});
     });
   })
-  .post('/saveprofilepw', function(req, res) {
-    console.log(req.body.id+" "+req.body.password+" "+req.body.newPassword);
-    query("SELECT * FROM users WHERE id = '" + req.body.id + "' AND password = '" + req.body.password + "' LIMIT 1;", function(data) {
-      if(data.length != 1) {
-        res.json({success : false});
-        return;
-      }
-      query("UPDATE users SET password = '" + req.body.newPassword + "', email = '" + req.body.email + "' WHERE id = '" + req.body.id + "' AND password = '" + req.body.password + "';", function(data) {
-          query("SELECT * FROM users WHERE id = '" + req.body.id + "' AND password = '" + req.body.newPassword + "' LIMIT 1;", function(data) {
-            delete data[0].password;
-            res.json({success : true, data : data[0]});
-          });
-      });
-    });
-  })
   .get('/tables', function(req, res) {
     query("SELECT table_name FROM information_schema.tables WHERE table_schema='public';", function(data) {
       if(data.length <= 0) {
@@ -67,11 +52,14 @@ app.use(bodyParser())
       }
     });
   })
-  .get('/rows/:tableName/:pageSize/:offset',  function(req, res) {
-    console.log(req.params.tableName);
-    console.log(req.params.pageSize);
-    console.log(req.params.offset);
-    query("SELECT * FROM "+ req.params.tableName +" LIMIT "+ req.params.pageSize + " OFFSET "+ req.params.offset +";", function(data) {
+  .post('/rows',  function(req, res) {
+    console.log(req.body.tableName);
+    console.log(req.body.pageSize);
+    console.log(req.body.offset);
+    console.log("SELECT * FROM " + req.body.tableName + " LIMIT " + req.body.pageSize + " OFFSET " + req.body.offset + " ORDER BY " + 
+    req.body.orderBy + " " + req.body.orderAsc +";");
+    query("SELECT * FROM " + req.body.tableName + " ORDER BY " + req.body.orderBy + " " 
+      + req.body.orderAsc + " LIMIT " + req.body.pageSize + " OFFSET " + req.body.offset + ";", function(data) {
       if(data.length < 0) {
         console.log(22222222);
         res.json({success : false});
@@ -79,7 +67,7 @@ app.use(bodyParser())
       }
       else if(data.length == 0) {
         console.log(111111111);
-        query("SELECT column_name FROM information_schema.columns WHERE table_name='" + req.params.tableName + "';", function(data) {
+        query("SELECT column_name FROM information_schema.columns WHERE table_name='" + req.body.tableName + "';", function(data) {
           console.log(data);
           res.json({success : true, data : data});
           //return;

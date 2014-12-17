@@ -57,7 +57,19 @@
             </tr>
             <tr>
               <th ng-repeat="col in table.cols">
-                <span class="col-header" data-placement="top" ng-bind="col"></span>
+                <span class="col-header" 
+                      data-placement="top" 
+                      ng-click="sort(col)">
+                  {{ col }}
+                  <span ng-show="col == filterCriteria.orderBy">
+                    <span ng-show="filterCriteria.orderAsc"
+                          class="glyphicon glyphicon-chevron-down">
+                    </span>
+                    <span ng-show="!filterCriteria.orderAsc"
+                          class="glyphicon glyphicon-chevron-up">
+                    </span>
+                  </span>
+                </span>
               </th>
               <th class="cell-warning">
                 <span class="glyphicon glyphicon-edit text-warning"
