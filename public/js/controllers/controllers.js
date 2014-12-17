@@ -330,7 +330,7 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
     };
 
     var refreshTable = function() {
-      $scope.selectTable($scope.pagingData.tableName);
+      $scope.selectTable($scope.pagingData.tableName, 1);
     };
 
     $scope.changePWD = function() {

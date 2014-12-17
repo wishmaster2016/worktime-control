@@ -8,6 +8,25 @@ body
   height: 100%;
 }
 
+.col-header {
+  color: #5cb85c; 
+}
+
+.list-group.list-tables li.active,
+.list-group.list-tables li.active:hover p,
+.list-group.list-tables li.active:active p,
+.list-group.list-tables li.active:focus p,
+.list-group.list-tables li.active:visited p,
+.list-group.list-tables li.active p {
+  background-color: #5cb85c;
+  border-color: #5cb85c;
+  color: #FFFFFF;
+}
+
+.form-control.page-items {
+  width: 75px;
+}
+
 .search-input {
   background-color: #dff0d8;
 }
