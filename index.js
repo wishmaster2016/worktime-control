@@ -67,9 +67,11 @@ app.use(bodyParser())
       }
     });
   })
-  .get('/rows/:tableName',  function(req, res) {
+  .get('/rows/:tableName/:pageSize/:offset',  function(req, res) {
     console.log(req.params.tableName);
-    query("SELECT * FROM "+req.params.tableName+";", function(data) {
+    console.log(req.params.pageSize);
+    console.log(req.params.offset);
+    query("SELECT * FROM "+ req.params.tableName +" LIMIT "+ req.params.pageSize + " OFFSET "+ req.params.offset +";", function(data) {
       if(data.length < 0) {
         console.log(22222222);
         res.json({success : false});
@@ -77,11 +79,24 @@ app.use(bodyParser())
       }
       else if(data.length == 0) {
         console.log(111111111);
-        query("SELECT column_name FROM information_schema.columns WHERE table_name='"+req.params.tableName+"';", function(data) {
+        query("SELECT column_name FROM information_schema.columns WHERE table_name='" + req.params.tableName + "';", function(data) {
           console.log(data);
           res.json({success : true, data : data});
           //return;
         });
+      }
+      else {
+        console.log(data);
+        res.json({data : data});
+      }
+    });
+  })
+  .get('/rowsCount/:tableName',  function(req, res) {
+    console.log(req.params.tableName);
+    query("SELECT COUNT(*) FROM " + req.params.tableName + ";", function(data) {
+      if(data.length <= 0) {
+        res.json({success : false});
+        return;
       }
       else {
         console.log(data);

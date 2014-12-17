@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('WorktimeControlApp', ['ngRoute', 'WorktimeControlApp.filters', 'WorktimeControlApp.services', 'WorktimeControlApp.directives', 'WorktimeControlApp.controllers', 'toaster'])
+angular.module('WorktimeControlApp', ['ngRoute', 'ngAnimate', 'WorktimeControlApp.filters', 'WorktimeControlApp.services', 'WorktimeControlApp.directives', 'WorktimeControlApp.controllers', 'toaster'])
 
 .config(['$routeProvider',  function($routeProvider) {$routeProvider
   .when('/', {templateUrl: 'partials/login.html', controller: 'loginCtrl'})

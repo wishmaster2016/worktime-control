@@ -89,8 +89,25 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
     };
     var username = {};
     $scope.table = {};
-    $scope.tableName = undefined;
+    $scope.curRowCount = 0;
+/*    $scope.totalPages = 0;
+    $scope.selectedPage = 1;
+    $scope.pageSize = 3;*/
+    
     $scope.tableCount = undefined;
+    $scope.tablesDetails = {};
+
+    $scope.pagingData = {
+      tableName: undefined,
+      totalPages: 0,
+      selectedPage: 1,
+      pageSize: 3
+    };
+
+    $scope.filterCriteria = {
+      pageNumber: 1,
+      sortDir: 'asc'
+    };
     
     $scope.user = JSON.parse(sessionStorage['user'] || '{}');
     if($scope.user && $scope.user.id && $scope.user.id > 0) {
@@ -117,17 +134,25 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
       };
     };
 
-    $scope.selectTable = function(obj) {
+    $scope.selectTable = function(obj, page) {
       try {
+        var offset = page * $scope.pagingData.pageSize - $scope.pagingData.pageSize;
         $scope.deleteId = undefined;
         $scope.updateId = undefined;
         $scope.loading = true;
-        $scope.tableName = obj;
+        $scope.pagingData.tableName = obj;
+        $scope.pagingData.selectedPage = page;
         clearTable();
+        $.get("/rowsCount/"+$scope.pagingData.tableName, function(data) {
+          $timeout(function() {
+            $scope.curRowCount = data.data[0].count;
+            $scope.pagingData.totalPages = Math.ceil($scope.curRowCount/$scope.pagingData.pageSize)
+          });
+        });
         if(obj) {
-          $.get("/rows/"+$scope.tableName, function(data) {
+          $.get("/rows/"+$scope.pagingData.tableName+"/"+$scope.pagingData.pageSize+"/"+offset, function(data) {
             $timeout(function() {
-              console.log($scope.tables);
+              /*console.log($scope.tables);*/
               if(data.data[0].column_name) {
                 var buf = []
                 for(var i = 0; i<data.data.length; i++) {
@@ -184,7 +209,7 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
         }
       }
       var params = {
-        name : $scope.tableName,
+        name : $scope.pagingData.tableName,
         addStr : addString
       };
       $http.post("/addRow", params)
@@ -242,7 +267,7 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
       }
       var params = {
         id : upd,
-        name : $scope.tableName,
+        name : $scope.pagingData.tableName,
         updStr : updString
       };
       $http.post("/updateRow", params)
@@ -285,7 +310,7 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
       $scope.loading = true;
       var params = {
         id : del,
-        name : $scope.tableName,
+        name : $scope.pagingData.tableName,
       };
       $http.post("/deleteRow", params)
         .then(function(data) {
@@ -305,7 +330,7 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
     };
 
     var refreshTable = function() {
-      $scope.selectTable($scope.tableName);
+      $scope.selectTable($scope.pagingData.tableName);
     };
 
     $scope.changePWD = function() {

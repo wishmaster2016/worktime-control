@@ -7,37 +7,55 @@
 
 
 <div class="row">
-  <div class="col-sm-3 col-md-2">
+  <div class="col-sm-3 col-md-2 sidebar">
     <div class="panel panel-success tables">
-      <div class="panel-body">
+      <div class="panel-heading">
         Tables
         <span class="label label-success">{{ tableCount }}</span>
       </div>
-      <div class="panel-footer">
-        <ul class="list-group">
+      <div class="panel-body">
+        <ul class="list-group list-tables">
           <li class="list-group-item" 
               ng-repeat="t in tables"
-              ng-class="{ active: tableName === t.table_name }"
-              ng-click="selectTable(t.table_name)">
-            <p class="list-group-item-text" ng-bind="t.table_name"></p>
+              ng-class="{ active: pagingData.tableName === t.table_name }"
+              ng-click="selectTable(t.table_name, 1)">
+            <p class="list-group-item-text">
+              {{ t.table_name }}
+              <span ng-click="showModalAddRow(); $event.stopPropagation()" class="glyphicon glyphicon-plus btn-add pull-right"></span>
+            </p>
           </li>
         </ul>
       </div>
     </div>
   </div>
   <div class="col-sm-9 col-md-10">
-      <h1 class="tableTitle">Table<small ID="TableName">&nbsp{{ tableName }}</small></h1>
+      <h1 class="tableTitle">Table<small ID="TableName">&nbsp{{ pagingData.tableName }}</small></h1>
       <h3 ></h3>
-      <hr />
-      <div>
-          <h4 >Add row:</h4>
-          <button ng-click="showModalAddRow()" class="btn btn btn-success">Add row</button>
-      </div>
       <hr />
       <h4 ng-show="table.rows.length">Show data:</h4>
       <div ng-show="table.rows.length" class="panel-group">
+        <div class="row">
+          <div class="col-xs-4 pull-right">
+                <label for="search">items per page:</label>
+                <input type="number" 
+                       min="1" 
+                       max="100" 
+                       class="form-control"
+                       ng-model="pagingData.pageSize"
+                       ng-change="selectTable(pagingData.tableName, 1)">
+          </div>
+        </div>
         <table class="table table-bordered">
           <thead>
+            <tr>
+              <th class="search-input" ng-repeat="col in table.cols">
+                <input type="text" placeholder="search by {{col}}"></input>
+              </th>
+              <th class="search-input">
+              </th>
+              <th class="search-input">
+              </th>
+            </tr>
             <tr>
               <th ng-repeat="col in table.cols">
                 <span data-placement="top" ng-bind="col"></span>
@@ -63,17 +81,21 @@
               </td>
               <td class="cell-warning" ng-click="showModalUpdateRow(row.id, row)">
                   <span class="glyphicon glyphicon-pencil" aria-hidden="true"
-                    data-placement="top" data-title="Edit" bs-tooltip>
+                        data-placement="top" data-title="Edit" bs-tooltip>
                   </span>
               </td>
               <td class="cell-danger" ng-click="showModalDeleteRow(row.id)">
                   <span class="glyphicon glyphicon-trash" aria-hidden="true"
-                    data-placement="top" data-title="Delete" bs-tooltip>
+                        data-placement="top" data-title="Delete" bs-tooltip>
                   </span>
               </td>
             </tr>
           </tbody>
         </table>
+        <pagination ng-if="pagingData.totalPages > 1" 
+                    paging-data="pagingData" 
+                    on-select-page="selectTable">
+        </pagination>
       </div>
   </div>
 </div>

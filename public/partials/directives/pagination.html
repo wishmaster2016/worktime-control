@@ -1,0 +1,8 @@
+<div class="btn-group" role="group" aria-label="Pagination">
+  <button type="button" class="btn btn-default"
+          ng-repeat="i in pages track by $index"
+          ng-bind="$index + 1"
+          ng-class="{ active: pagingData.selectedPage === $index + 1 }"
+          ng-click="onSelectPage(pagingData.tableName, $index + 1)">
+  </button>
+</div>
