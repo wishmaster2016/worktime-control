@@ -273,6 +273,10 @@ angular.module('WorktimeControlApp.controllers', ['mgcrea.ngStrap'])
       });
     };
 
+    $scope.clearSearchCols = function() {
+      $scope.searchCols = {};
+    };
+
     $scope.showModalDeleteRow = function(id) {
       $scope.deleteId = id;
       $modal({
