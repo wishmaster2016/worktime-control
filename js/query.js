@@ -15,9 +15,11 @@ var exec = function(q, callback) {
   this.query(q, function(err, result) {
     if(err) {
       console.error(err);
-      throw 'Error executing query!';
+      callback(null, {error: err});
     }
-    callback(null, result.rows);
+    if(result && result.rows) {
+      callback(null, result.rows);
+    }
   });
 }
 

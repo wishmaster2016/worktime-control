@@ -1,10 +1,8 @@
-html 
-{
+html {
   height: 100%;
 }
 
-body 
-{
+body {
   height: 100%;
 }
 
@@ -50,45 +48,30 @@ body
 }
 
 .logo {
-    width: 45px;
-    height: 45px;
-    float: left;
-    padding-right: 5px;
-    padding-top: 5px;
+  width: 45px;
+  height: 45px;
+  float: left;
+  padding-right: 5px;
+  padding-top: 5px;
 }
 
-.jumbotron.login
-{
+.jumbotron.login {
   width: 50%;
   margin: 0px auto;
 }
 
-#toast-container
-{
+#toast-container {
 	font-family: "wf_SegoeUINormal";
 	font-weight: lighter;
 }
 
-.login-header
-{
+.login-header {
 	margin-bottom: 50px;
-}
-
-.btn.btn-sign
-{
-	width: 30%;
-	font-family: "wf_SegoeUINormal";
-	font-size: 17pt;	
 }
 
 .sidebar .panel .panel-body {
   background-color: #eee;
 }
-/*
-.navbar-header {
-	color: #564F8A; 
-	width: 60%;
-}*/
 
 .test {
   margin-top: 100px;
@@ -96,12 +79,6 @@ body
   margin-right: auto;
   width: 200px;
 }
-
-/*.navbar-default .navbar-brand {
-  color: #564F8A !important;
-  font-family: "wf_SegoeUIBold";
-  font-size: x-large;
-}*/
 
 .main {
   padding: 40px;
@@ -141,35 +118,35 @@ td.cell-danger:hover {
   background-color: #D9534F;
 }
 
-@font-face{
-    font-family: 'wf_SegoeUILight';
-    src:url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Light/latest.eot');
-    src:url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Light/latest.eot?#iefix') format('embedded-opentype'),
-        url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Light/latest.woff') format('woff'),
-        url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Light/latest.ttf') format('truetype'),
-        url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Light/latest.svg#web') format('svg');
-    font-weight: normal;
-    font-style: normal;
+@font-face {
+  font-family: 'wf_SegoeUILight';
+  src:url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Light/latest.eot');
+  src:url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Light/latest.eot?#iefix') format('embedded-opentype'),
+      url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Light/latest.woff') format('woff'),
+      url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Light/latest.ttf') format('truetype'),
+      url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Light/latest.svg#web') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }
 
-@font-face{
-    font-family: 'wf_SegoeUINormal';
-    src:url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Normal/latest.eot');
-    src:url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Normal/latest.eot?#iefix') format('embedded-opentype'),
-        url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Normal/latest.woff') format('woff'),
-        url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Normal/latest.ttf') format('truetype'),
-        url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Normal/latest.svg#web') format('svg');
-    font-weight: normal;
-    font-style: normal;
+@font-face {
+  font-family: 'wf_SegoeUINormal';
+  src:url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Normal/latest.eot');
+  src:url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Normal/latest.eot?#iefix') format('embedded-opentype'),
+      url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Normal/latest.woff') format('woff'),
+      url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Normal/latest.ttf') format('truetype'),
+      url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Normal/latest.svg#web') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }
 
-@font-face{
-    font-family: 'wf_SegoeUIBold';
-    src:url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Bold/latest.eot');
-    src:url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Bold/latest.eot?#iefix') format('embedded-opentype'),
-        url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Bold/latest.woff') format('woff'),
-        url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Bold/latest.ttf') format('truetype'),
-        url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Bold/latest.svg#web') format('svg');
-    font-weight: normal;
-    font-style: normal;
+@font-face {
+  font-family: 'wf_SegoeUIBold';
+  src:url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Bold/latest.eot');
+  src:url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Bold/latest.eot?#iefix') format('embedded-opentype'),
+      url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Bold/latest.woff') format('woff'),
+      url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Bold/latest.ttf') format('truetype'),
+      url('http://i.s-microsoft.com/fonts/Segoe-UI/Cyrillic/Bold/latest.svg#web') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }

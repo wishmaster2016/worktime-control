@@ -16,7 +16,6 @@ app.use(bodyParser())
   })
   .use(express.static(__dirname + '/public'))
   .post('/login', function(req, res) {
-    console.log(req.body.login+",  "+req.body.password);
     query("SELECT * FROM users WHERE login = '" + req.body.login + "' AND password = '" + req.body.password + "' LIMIT 1;", function(data) {
       if(data.length != 1) {
         res.json({success : false});
@@ -45,8 +44,6 @@ app.use(bodyParser())
         return;
       }
       else {
-        console.log(data);
-        console.log("tables count= " + data.length);
         res.json({data : data});
       }
     });
@@ -63,7 +60,6 @@ app.use(bodyParser())
         }
       }
       where = where.substring(0, where.length - 5);
-      console.log(where);
     }
     query("SELECT * FROM " + req.body.tableName + where + " ORDER BY " + req.body.orderBy + " " 
       + req.body.orderAsc + " LIMIT " + req.body.pageSize + " OFFSET " + req.body.offset + ";", function(data) {
@@ -73,12 +69,10 @@ app.use(bodyParser())
       }
       else if(data.length == 0) {
         query("SELECT column_name FROM information_schema.columns WHERE table_name='" + req.body.tableName + "';", function(data) {
-          console.log(data);
           res.json({success : true, data : data});
         });
       }
       else {
-        console.log(data);
         res.json({data : data});
       }
     });
@@ -95,16 +89,13 @@ app.use(bodyParser())
         }
       }
       where = where.substring(0, where.length - 5);
-      console.log(where);
     }
-    console.log("SELECT COUNT(*) FROM " + req.body.tableName + where + ";");
     query("SELECT COUNT(*) FROM " + req.body.tableName + where + ";", function(data) {
       if(data.length <= 0) {
         res.json({success : false});
         return;
       }
       else {
-        console.log(data);
         res.json({data : data});
       }
     });
@@ -115,8 +106,9 @@ app.use(bodyParser())
         res.json({success : true, data : data[0]});
         return;
       }
-      else
+      else {
         res.json({success : false});
+      }
     });
   })
   .post('/updateRow', function(req, res) {
